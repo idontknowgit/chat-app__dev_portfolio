@@ -1,0 +1,19 @@
+overview - 
+    able to signup / login
+    create a chatroom
+    join a chatroom
+    able to see when user in typing 
+    able to @ specific user in chatroom 
+    chatroom is deleted when room is inactive for x seconds
+    
+backend - 
+    python
+    flask
+    socket.io
+    sqlite
+
+frontend - 
+    react
+    scss
+
+
