@@ -1,44 +1,34 @@
 import os
 from config import config
-from flask import Flask, url_for, jsonify
-from flask_socketio import SocketIO, emit
-from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from flask_restful import Api
-from flask_jwt_extended import JWTManager
+from flask import Flask, url_for, request
 from constants import MODE
 from helpers import api_error
 from datetime import timedelta
 
-app = Flask(__name__)
 
+def create_app():
+    app = Flask(__name__)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = config.DB_URI
-app.config["JWT_SECRET_KEY"] = config.JWT_SECRET
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
-app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
+    app.config["SQLALCHEMY_DATABASE_URI"] = config.DB_URI
+    app.config["JWT_SECRET_KEY"] = config.JWT_SECRET
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+    app.config["JWT_COOKIE_SECURE"] = MODE == "PRODUCTION"
 
-db = SQLAlchemy(app)
-jwt = JWTManager(app)
+    from extensions import jwt, db, socket
+    from controllers import register_blueprints
 
+    jwt.init_app(app)
+    db.init_app(app)
+    socket.init_app(app)
+    register_blueprints(app)
 
-@app.errorhandler(Exception)
-def server_error(err):
-    app.logger.exception(err)
-    return api_error(message="Oops. Something is broken.", status_code=500)
+    @app.errorhandler(Exception)
+    def server_error(err):
+        app.logger.exception(err)
+        return api_error(message="Oops. Something is broken.", status_code=500)
 
+    if MODE == "PRODUCTION":
+        url_for("/", filename="client/build/index.html")
 
-def unauthorized(*args, **kwargs):
-    return api_error(message="Unauthorized. Please log in.", status_code=401)
-
-
-jwt.expired_token_loader(unauthorized)
-jwt.unauthorized_loader(unauthorized)
-jwt.invalid_token_loader(unauthorized)
-
-""" CORS(app)
-socketio = SocketIO(app, cors_allowed_origins='http://localhost:5000/')
-
-if MODE == 'PRODUCTION':
-    url_for('/', filename='client/build/index.html')
- """
+    return app

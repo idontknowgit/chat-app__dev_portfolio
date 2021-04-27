@@ -1,0 +1,26 @@
+.text-field {
+  &__field {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  &__label {
+    margin-bottom: 0.5rem;
+  }
+
+  &__input {
+    border: none;
+    outline: none;
+    color: inherit;
+    border: 1px solid #eee;
+    flex: 1;
+    padding: 1.5rem;
+  }
+
+  &__error {
+    color: red;
+    margin-top: 0.5rem;
+  }
+}

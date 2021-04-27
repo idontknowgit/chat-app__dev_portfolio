@@ -1,0 +1,19 @@
+.navbar {
+  position: absolute;
+  z-index: 100;
+  width: 100%;
+  left: 0;
+  top: 0;
+  &__content {
+    align-items: center;
+    display: flex;
+    height: 6rem;
+  }
+  &__brand {
+    margin-right: auto;
+    font-size: 2.5rem;
+  }
+  &__btn {
+    padding: 1rem;
+  }
+}

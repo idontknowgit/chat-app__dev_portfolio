@@ -1,6 +1,9 @@
-from app import app, db
-from routes import register_blueprints
+from app import create_app
+from extensions import socket
+from constants import MODE
+import logging
 
-db.create_all()
-register_blueprints(app)
-app.run()
+logging.basicConfig(level=logging.DEBUG)
+
+app = create_app()
+socket.run(app)
